@@ -1,2 +1,5 @@
-package io.kl3jvi.services 
+package io.kl3jvi.services
 
+class ProjectService {
+
+}

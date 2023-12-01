@@ -1,4 +1,11 @@
 package io.kl3jvi.auth
 
-class JWT {
+import io.ktor.server.application.*
+import io.ktor.server.auth.*
+
+
+fun Application.setupJWT() {
+    install(Authentication) {
+
+    }
 }

@@ -36,7 +36,13 @@ dependencies {
     implementation("io.ktor:ktor-server-content-negotiation-jvm")
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm")
     implementation("org.jetbrains.exposed:exposed-core:$exposed_version")
+    implementation("org.jetbrains.exposed:exposed-jodatime:$exposed_version")
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
+        //koin for ktor backend
+    implementation("io.ktor:ktor-server-core-jvm")
+
+    //bcrypt
+    implementation("org.mindrot:jbcrypt:0.4")
     implementation("com.h2database:h2:$h2_version")
     implementation("io.ktor:ktor-server-netty-jvm")
     implementation("ch.qos.logback:logback-classic:$logback_version")

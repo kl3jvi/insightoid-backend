@@ -1,6 +1,9 @@
 package io.kl3jvi
 
-import io.kl3jvi.plugins.*
+import io.kl3jvi.api.setupCrashDataRoutes
+import io.kl3jvi.api.setupProjectRoutes
+import io.kl3jvi.api.setupUserRoutes
+import io.kl3jvi.persistence.DatabaseFactory
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
@@ -11,10 +14,18 @@ fun main() {
 }
 
 fun Application.module() {
-    configureSecurity()
-    configureHTTP()
-    configureMonitoring()
-    configureSerialization()
-    configureDatabases()
-    configureRouting()
+    configureKoin()
+    configureDatabase()
+    /*******************************************************/
+    setupUserRoutes()
+    setupProjectRoutes()
+    setupCrashDataRoutes()
+
+}
+
+fun Application.configureDatabase() {
+    return DatabaseFactory.init()
+}
+
+fun Application.configureKoin() {
 }
