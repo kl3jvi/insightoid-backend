@@ -1,41 +1,34 @@
 package io.kl3jvi.services
 
-import io.kl3jvi.models.User
-import io.kl3jvi.persistence.Users
-import io.kl3jvi.utils.HashingUtils
-import io.kl3jvi.utils.HashingUtils.verifyPassword
-import org.jetbrains.exposed.sql.insertAndGetId
-import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.transactions.transaction
+import com.mongodb.reactivestreams.client.MongoCollection
+import io.kl3jvi.models.CollectionType
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.reactive.asFlow
+import org.bson.Document
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
+import org.koin.core.qualifier.named
+import org.mindrot.jbcrypt.BCrypt
 
-class UserService {
+class UserService : KoinComponent {
+    private val usersCollection: MongoCollection<Document> by inject(named(CollectionType.USER.name))
 
-    fun registerUser(username: String, password: String): User? {
-        val hashedPassword = HashingUtils.hashPassword(password)
-        var userId: Int? = null
-
-        transaction {
-            userId = Users.insertAndGetId {
-                it[Users.username] = username
-                it[Users.hashedPassword] = hashedPassword
-            }.value
-        }
-
-        return userId?.let { User(it, username) }
+    fun registerUser(username: String, password: String) {
+        val hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt())
+        val user = Document("username", username)
+            .append("password", hashedPassword)
+            .append("projectIds", mutableListOf<String>())
+        usersCollection.insertOne(user)
     }
 
-    fun loginUser(username: String, password: String): User? {
-        var foundUser: User? = null
-
-        transaction {
-            Users.select { Users.username eq username }.singleOrNull()?.let {
-                val hashedPassword = it[Users.hashedPassword]
-                if (verifyPassword(password, hashedPassword)) {
-                    foundUser = User(it[Users.id].value, username)
-                }
+    suspend fun loginUser(username: String, password: String): Boolean {
+        return usersCollection.find(Document("username", username))
+            .asFlow()
+            .first { user ->
+                val hashedPassword = user.getString("username")
+                BCrypt.checkpw(password, hashedPassword)
+            }.all {
+                it.key == "username"
             }
-        }
-
-        return foundUser
     }
 }

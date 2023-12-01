@@ -1,19 +1,32 @@
 package io.kl3jvi.persistence
 
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.transactions.transaction
+import com.mongodb.ConnectionString
+import com.mongodb.MongoClientSettings
+import com.mongodb.ServerApi
+import com.mongodb.ServerApiVersion
+import com.mongodb.reactivestreams.client.MongoClients
+import com.mongodb.reactivestreams.client.MongoDatabase
 
-object DatabaseFactory {
-    fun init() {
-//        Database.connect(
-//            url = "jdbc:postgresql://localhost:5432/insightoid",
-//            driver = "org.postgresql.Driver",
-//            user = "dbuser",
-//            password = "dbpassword"
-//        )
-//        transaction {
-//            SchemaUtils.create(Users, Projects, Crashes)
-//        }
+class DatabaseFactory {
+    fun init(): MongoDatabase {
+        val connectionString = /*System.getenv("MONGODB_CONNECTION_STRING")
+            ?: */"mongodb+srv://kl3jvi:kl3jvi123@cluster0.bgif7au.mongodb.net/?retryWrites=true&w=majority"
+
+
+        val serverApi = ServerApi.builder()
+            .version(ServerApiVersion.V1)
+            .build()
+
+        val mongoClientSettings =
+            MongoClientSettings.builder()
+                .applyConnectionString(ConnectionString(connectionString))
+                .serverApi(serverApi)
+                .build()
+
+        val mongoClient = MongoClients
+            .create(mongoClientSettings)
+
+        return mongoClient
+            .getDatabase("insightoid")
     }
 }

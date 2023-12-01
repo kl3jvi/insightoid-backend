@@ -40,6 +40,11 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
         //koin for ktor backend
     implementation("io.ktor:ktor-server-core-jvm")
+    // mongo for ktor
+    implementation("org.litote.kmongo:kmongo-coroutine:4.11.0")
+
+    implementation("io.insert-koin:koin-core:3.1.2")
+    implementation("io.insert-koin:koin-ktor:3.1.2")
 
     //bcrypt
     implementation("org.mindrot:jbcrypt:0.4")

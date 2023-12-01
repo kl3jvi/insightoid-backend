@@ -1,3 +1,10 @@
 package io.kl3jvi.models
 
-data class User(val userId: Int, val username: String)
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class User(
+    val userId: String,
+    val username: String,
+    val password: String
+)
