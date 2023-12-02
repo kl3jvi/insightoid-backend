@@ -1,6 +1,6 @@
 package io.kl3jvi.api
 
-import io.kl3jvi.models.Project
+import io.kl3jvi.models.ProjectCreation
 import io.kl3jvi.services.ProjectService
 import io.kl3jvi.utils.authGet
 import io.kl3jvi.utils.authPost
@@ -19,7 +19,7 @@ fun Application.setupProjectRoutes() {
 fun Route.projectRoutes(projectService: ProjectService) {
     route("/projects") {
         authPost("/createProject") {
-            val project = call.receive<Project>()
+            val project = call.receive<ProjectCreation>()
             projectService.createProject(project.userId, project.projectName)
             call.respondText("Project created successfully", status = HttpStatusCode.Created)
         }

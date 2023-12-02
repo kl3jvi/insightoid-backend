@@ -17,20 +17,26 @@ fun Application.setupCrashDataRoutes() {
 }
 
 fun Route.crashDataRoutes(crashDataService: CrashDataService) {
-    route("/crashes") {
-        post("/") {
+    route("/crash-reports") {
+
+        post("/report") {
             // get project id from header, if null return 400
             val projectId: String =
                 call.request.headers["apiKey"]
                     ?: return@post call.respondText("Missing project id", status = HttpStatusCode.BadRequest)
-
             val crashData = call.receive<CrashData>()
             crashDataService.addCrashData(crashData.copy(projectId = projectId))
             call.respondText("Crash data added successfully $crashData", status = HttpStatusCode.Created)
         }
 
-        get("/{projectId}") {
-            // Handle retrieving crash data for a specific project
+        get("/project/{projectId}") {
+            val projectId = call.parameters["projectId"]
+            if (projectId == null) {
+                call.respondText("Missing project id", status = HttpStatusCode.BadRequest)
+            } else {
+                val crashData = crashDataService.getCrashDataByProjectId(projectId)
+                call.respond(crashData)
+            }
         }
     }
 }

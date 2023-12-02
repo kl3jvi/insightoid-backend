@@ -7,7 +7,6 @@ import io.kl3jvi.utils.respondOk
 import io.kl3jvi.utils.respondUnauthorized
 import io.ktor.server.application.*
 import io.ktor.server.request.*
-import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.java.KoinJavaComponent.inject
 
@@ -28,14 +27,14 @@ fun Route.userRoutes(
             val user = call.receive<User>()
             userService.registerUser(user.username, user.password)
             val token = jwtService.generateToken(user)
-            call.respond(mapOf("token" to token))
+            call.respondOk("User registered successfully", token = token)
         }
 
         post("/login") {
             val user = call.receive<User>()
             val isUserValid = userService.loginUser(user.username, user.password)
             if (isUserValid) {
-                call.respondOk("User logged in successfully")
+                call.respondOk("User logged in successfully", jwtService.generateToken(user))
             } else {
                 call.respondUnauthorized("Invalid username or password")
             }

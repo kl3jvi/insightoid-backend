@@ -2,7 +2,7 @@ package io.kl3jvi.services
 
 import com.mongodb.reactivestreams.client.MongoCollection
 import io.kl3jvi.models.CollectionType
-import io.kl3jvi.models.Project
+import io.kl3jvi.models.ProjectCreation
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.reactive.asFlow
 import org.bson.Document
@@ -40,7 +40,7 @@ class ProjectService : KoinComponent {
             .collect()
     }
 
-    suspend fun getAllProjects(): List<Project> {
+    suspend fun getAllProjects(): List<ProjectCreation> {
         return projectsCollection.find()
             .asFlow()
             .onEach { project ->
@@ -48,7 +48,7 @@ class ProjectService : KoinComponent {
             }
             .catch { e -> println("Exception thrown in getAllProjects: $e") }
             .map { project ->
-                Project(
+                ProjectCreation(
                     projectName = project.getString("projectName"),
                     userId = project.getString("userId"),
                 )
