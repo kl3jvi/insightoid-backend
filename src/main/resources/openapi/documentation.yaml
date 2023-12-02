@@ -6,18 +6,106 @@ info:
 servers:
   - url: "http://0.0.0.0:8080"
 paths:
-  /:
-    get:
-      description: "Hello World!"
+  /users/register:
+    post:
+      description: "Register a new user"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                username:
+                  type: "string"
+                password:
+                  type: "string"
       responses:
         "200":
-          description: "OK"
+          description: "User registered successfully"
           content:
-            text/plain:
+            application/json:
               schema:
-                type: "string"
-              examples:
-                Example#1:
-                  value: "Hello World!"
+                $ref: "#/components/schemas/State"
+  /users/login:
+    post:
+      description: "Authenticate a user"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                username:
+                  type: "string"
+                password:
+                  type: "string"
+      responses:
+        "200":
+          description: "User authenticated successfully"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/State"
+  /crash-reports/report:
+    post:
+      description: "Report a new crash"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CrashData"
+      responses:
+        "201":
+          description: "Crash data added successfully"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/State"
+  /crash-reports/project/{projectId}:
+    get:
+      description: "Retrieve crash data for a specific project"
+      parameters:
+        - in: path
+          name: projectId
+          schema:
+            type: string
+          required: true
+          description: The ID of the project
+      responses:
+        "200":
+          description: "Crash data retrieved successfully"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/CrashData"
 components:
   schemas:
+    State:
+      type: "object"
+      properties:
+        status:
+          type: "integer"
+        message:
+          type: "string"
+        token:
+          type: "string"
+        data:
+          type: "object"
+    CrashData:
+      type: "object"
+      properties:
+        threadName:
+          type: "string"
+        threadId:
+          type: "integer"
+        exceptionName:
+          type: "string"
+        exceptionMessage:
+          type: "string"
+        stackTrace:
+          type: "string"
