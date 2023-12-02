@@ -9,5 +9,5 @@ data class CrashData(
     val threadId: Long,
     val exceptionName: String,
     val exceptionMessage: String,
-    val stackTrace: String
+    val stackTrace: String,
 )

@@ -4,5 +4,5 @@ enum class CollectionType {
     USER,
     PROJECT,
     CRASH_DATA,
-    EVENT
+    EVENT,
 }

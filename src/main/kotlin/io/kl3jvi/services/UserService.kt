@@ -15,18 +15,25 @@ import org.mindrot.jbcrypt.BCrypt
 class UserService : KoinComponent {
     private val usersCollection: MongoCollection<Document> by inject(named(CollectionType.USER.name))
 
-    suspend fun registerUser(username: String, password: String) {
+    suspend fun registerUser(
+        username: String,
+        password: String,
+    ) {
         val hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt())
-        val user = Document("username", username)
-            .append("password", hashedPassword)
-            .append("projectIds", mutableListOf<String>())
+        val user =
+            Document("username", username)
+                .append("password", hashedPassword)
+                .append("projectIds", mutableListOf<String>())
         usersCollection.insertOne(user)
             .asFlow()
             .catch { e -> println("Exception thrown in registerUser: $e") }
             .collect()
     }
 
-    suspend fun loginUser(username: String, password: String): Boolean {
+    suspend fun loginUser(
+        username: String,
+        password: String,
+    ): Boolean {
         return usersCollection.find(Document("username", username))
             .asFlow()
             .first { user ->

@@ -11,7 +11,6 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.java.KoinJavaComponent
 
-
 fun Application.setupProjectRoutes() {
     val projectService: ProjectService by KoinJavaComponent.inject(ProjectService::class.java)
     routing { projectRoutes(projectService) }
@@ -19,7 +18,6 @@ fun Application.setupProjectRoutes() {
 
 fun Route.projectRoutes(projectService: ProjectService) {
     route("/projects") {
-
         authPost("/createProject") {
             val project = call.receive<Project>()
             projectService.createProject(project.userId, project.projectName)
@@ -32,4 +30,3 @@ fun Route.projectRoutes(projectService: ProjectService) {
         }
     }
 }
-

@@ -15,11 +15,12 @@ class CrashDataService : KoinComponent {
     private val crashesCollection: MongoCollection<Document> by inject(named(CollectionType.CRASH_DATA.name))
 
     suspend fun addCrashData(crashData: CrashData) {
-        val crashDocument = Document("threadName", crashData.threadName)
-            .append("threadId", crashData.threadId)
-            .append("exceptionName", crashData.exceptionName)
-            .append("exceptionMessage", crashData.exceptionMessage)
-            .append("stackTrace", crashData.stackTrace)
+        val crashDocument =
+            Document("threadName", crashData.threadName)
+                .append("threadId", crashData.threadId)
+                .append("exceptionName", crashData.exceptionName)
+                .append("exceptionMessage", crashData.exceptionMessage)
+                .append("stackTrace", crashData.stackTrace)
         crashesCollection.insertOne(crashDocument)
             .asFlow()
             .catch { e -> println("Exception thrown in addCrashData: $e") }

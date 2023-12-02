@@ -15,11 +15,15 @@ class ProjectService : KoinComponent {
     private val projectsCollection: MongoCollection<Document> by inject(named(CollectionType.PROJECT.name))
     private val usersCollection: MongoCollection<Document> by inject(named(CollectionType.USER.name))
 
-    suspend fun createProject(userId: String, projectName: String) {
+    suspend fun createProject(
+        userId: String,
+        projectName: String,
+    ) {
         val projectKey = UUID.randomUUID().toString()
-        val project = Document("projectId", projectKey)
-            .append("projectName", projectName)
-            .append("userId", userId)
+        val project =
+            Document("projectId", projectKey)
+                .append("projectName", projectName)
+                .append("userId", userId)
         projectsCollection.insertOne(project)
 
         usersCollection.find(Document("userId", userId))
@@ -29,7 +33,7 @@ class ProjectService : KoinComponent {
                 projectIds.add(projectKey)
                 usersCollection.updateOne(
                     Document("userId", userId),
-                    Document("\$set", Document("projectIds", projectIds))
+                    Document("\$set", Document("projectIds", projectIds)),
                 )
             }
             .catch { e -> println("Exception thrown in createProject: $e") }
@@ -46,7 +50,7 @@ class ProjectService : KoinComponent {
             .map { project ->
                 Project(
                     projectName = project.getString("projectName"),
-                    userId = project.getString("userId")
+                    userId = project.getString("userId"),
                 )
             }.toList()
     }

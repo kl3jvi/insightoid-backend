@@ -8,7 +8,6 @@ import io.kl3jvi.di.appModule
 import io.kl3jvi.di.serviceModule
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
-import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.server.plugins.contentnegotiation.*
@@ -16,9 +15,10 @@ import org.koin.core.context.startKoin
 
 fun main() {
     embeddedServer(
-        Netty, port = 8080,
+        Netty,
+        port = 8080,
         host = "0.0.0.0",
-        module = Application::module
+        module = Application::module,
     ).start(wait = true)
 }
 

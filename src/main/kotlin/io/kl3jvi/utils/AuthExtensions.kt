@@ -7,14 +7,20 @@ import io.ktor.util.*
 import io.ktor.util.pipeline.*
 
 @KtorDsl
-fun Route.authGet(path: String, body: suspend PipelineContext<Unit, ApplicationCall>.(Unit) -> Unit) {
+fun Route.authGet(
+    path: String,
+    body: suspend PipelineContext<Unit, ApplicationCall>.(Unit) -> Unit,
+) {
     authenticate {
         get(path, body)
     }
 }
 
 @KtorDsl
-fun Route.authPost(path: String, body: suspend PipelineContext<Unit, ApplicationCall>.(Unit) -> Unit) {
+fun Route.authPost(
+    path: String,
+    body: suspend PipelineContext<Unit, ApplicationCall>.(Unit) -> Unit,
+) {
     authenticate {
         post(path, body)
     }
