@@ -47,7 +47,7 @@ import org.openapitools.client.JSON;
 /**
  * UsersRegisterPostRequest
  */
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2023-12-02T02:21:00.871096+01:00[Europe/Tirane]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2023-12-02T02:25:36.328457+01:00[Europe/Tirane]")
 public class UsersRegisterPostRequest {
   public static final String SERIALIZED_NAME_USERNAME = "username";
   @SerializedName(SERIALIZED_NAME_USERNAME)

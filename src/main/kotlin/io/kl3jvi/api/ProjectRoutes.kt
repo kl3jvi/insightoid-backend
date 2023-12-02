@@ -4,6 +4,7 @@ import io.kl3jvi.models.ProjectCreation
 import io.kl3jvi.services.ProjectService
 import io.kl3jvi.utils.authGet
 import io.kl3jvi.utils.authPost
+import io.kl3jvi.utils.respondOk
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -21,7 +22,7 @@ fun Route.projectRoutes(projectService: ProjectService) {
         authPost("/createProject") {
             val project = call.receive<ProjectCreation>()
             projectService.createProject(project.userId, project.projectName)
-            call.respondText("Project created successfully", status = HttpStatusCode.Created)
+            call.respondOk("Project created successfully")
         }
 
         authGet("/all") {

@@ -2,7 +2,7 @@
 
 Application API
 - API version: 1.0.0
-  - Build date: 2023-12-02T02:21:00.871096+01:00[Europe/Tirane]
+  - Build date: 2023-12-02T02:25:36.328457+01:00[Europe/Tirane]
 
 Application API
 

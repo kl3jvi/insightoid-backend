@@ -25,6 +25,10 @@ class ProjectService : KoinComponent {
                 .append("projectName", projectName)
                 .append("userId", userId)
         projectsCollection.insertOne(project)
+            .asFlow()
+            .onEach { println("Inserted project with key $projectKey") }
+            .catch { e -> println("Exception thrown in createProject: $e") }
+            .collect()
 
         usersCollection.find(Document("userId", userId))
             .asFlow()
