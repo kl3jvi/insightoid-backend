@@ -1,0 +1,129 @@
+openapi: 3.0.3
+info:
+  description: Application API
+  title: Application API
+  version: 1.0.0
+servers:
+- url: http://0.0.0.0:8080
+paths:
+  /users/register:
+    post:
+      description: Register a new user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/_users_register_post_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/State'
+          description: User registered successfully
+      x-content-type: application/json
+      x-accepts: application/json
+  /users/login:
+    post:
+      description: Authenticate a user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/_users_register_post_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/State'
+          description: User authenticated successfully
+      x-content-type: application/json
+      x-accepts: application/json
+  /crash-reports/report:
+    post:
+      description: Report a new crash
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CrashData'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/State'
+          description: Crash data added successfully
+      x-content-type: application/json
+      x-accepts: application/json
+  /crash-reports/project/{projectId}:
+    get:
+      description: Retrieve crash data for a specific project
+      parameters:
+      - description: The ID of the project
+        explode: false
+        in: path
+        name: projectId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/CrashData'
+                type: array
+          description: Crash data retrieved successfully
+      x-accepts: application/json
+components:
+  schemas:
+    State:
+      example:
+        data: "{}"
+        message: message
+        status: 0
+        token: token
+      properties:
+        status:
+          type: integer
+        message:
+          type: string
+        token:
+          type: string
+        data:
+          type: object
+      type: object
+    CrashData:
+      example:
+        threadId: 0
+        stackTrace: stackTrace
+        threadName: threadName
+        exceptionMessage: exceptionMessage
+        exceptionName: exceptionName
+      properties:
+        threadName:
+          type: string
+        threadId:
+          type: integer
+        exceptionName:
+          type: string
+        exceptionMessage:
+          type: string
+        stackTrace:
+          type: string
+      type: object
+    _users_register_post_request:
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      type: object
+
