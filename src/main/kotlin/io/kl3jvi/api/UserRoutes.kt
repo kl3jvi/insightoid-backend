@@ -1,7 +1,7 @@
 package io.kl3jvi.api
 
-import io.kl3jvi.models.Project
 import io.kl3jvi.models.User
+import io.kl3jvi.services.JWTService
 import io.kl3jvi.services.ProjectService
 import io.kl3jvi.services.UserService
 import io.ktor.http.*
@@ -14,25 +14,22 @@ import org.koin.java.KoinJavaComponent.inject
 
 fun Application.setupUserRoutes() {
     val userService: UserService by inject(UserService::class.java)
-    val projectService: ProjectService by inject(ProjectService::class.java)
+    val jwtService: JWTService by inject(JWTService::class.java)
     routing {
-        userRoutes(userService, projectService)
+        userRoutes(userService, jwtService)
     }
 }
 
-fun Route.userRoutes(userService: UserService, projectService: ProjectService) {
+fun Route.userRoutes(
+    userService: UserService,
+    jwtService: JWTService
+) {
     route("/users") {
         post("/register") {
             val user = call.receive<User>()
             userService.registerUser(user.username, user.password)
-            call.respondText("User registered successfully", status = HttpStatusCode.Created)
-        }
-
-        // create project route
-        post("/createProject") {
-            val user = call.receive<Project>()
-            projectService.createProject(user.userId, user.projectName)
-            call.respondText("Project created successfully", status = HttpStatusCode.Created)
+            val token = jwtService.generateToken(user)
+            call.respond(mapOf("token" to token))
         }
 
         post("/login") {

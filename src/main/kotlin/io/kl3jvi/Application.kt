@@ -3,6 +3,7 @@ package io.kl3jvi
 import io.kl3jvi.api.setupCrashDataRoutes
 import io.kl3jvi.api.setupProjectRoutes
 import io.kl3jvi.api.setupUserRoutes
+import io.kl3jvi.auth.setupAuth
 import io.kl3jvi.di.appModule
 import io.kl3jvi.di.serviceModule
 import io.ktor.serialization.kotlinx.json.*
@@ -25,6 +26,7 @@ fun Application.module() {
     startKoin {
         modules(appModule, serviceModule)
     }
+    setupAuth()
     setupUserRoutes()
     setupProjectRoutes()
     setupCrashDataRoutes()

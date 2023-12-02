@@ -2,9 +2,8 @@ package io.kl3jvi.services
 
 import com.mongodb.reactivestreams.client.MongoCollection
 import io.kl3jvi.models.CollectionType
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.onEach
+import io.kl3jvi.models.Project
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.reactive.asFlow
 import org.bson.Document
 import org.koin.core.component.KoinComponent
@@ -35,5 +34,20 @@ class ProjectService : KoinComponent {
             }
             .catch { e -> println("Exception thrown in createProject: $e") }
             .collect()
+    }
+
+    suspend fun getAllProjects(): List<Project> {
+        return projectsCollection.find()
+            .asFlow()
+            .onEach { project ->
+                println(project)
+            }
+            .catch { e -> println("Exception thrown in getAllProjects: $e") }
+            .map { project ->
+                Project(
+                    projectName = project.getString("projectName"),
+                    userId = project.getString("userId")
+                )
+            }.toList()
     }
 }

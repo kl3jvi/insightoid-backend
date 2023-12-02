@@ -1,27 +1,35 @@
 package io.kl3jvi.api
 
+import io.kl3jvi.models.Project
 import io.kl3jvi.services.ProjectService
+import io.kl3jvi.utils.authGet
+import io.kl3jvi.utils.authPost
+import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import org.koin.java.KoinJavaComponent
 
 
 fun Application.setupProjectRoutes() {
-    val projectService = ProjectService()
-    routing {
-        projectRoutes(projectService)
-    }
+    val projectService: ProjectService by KoinJavaComponent.inject(ProjectService::class.java)
+    routing { projectRoutes(projectService) }
 }
 
 fun Route.projectRoutes(projectService: ProjectService) {
     route("/projects") {
-        post("/") {
-            // Handle creating a new project
+
+        authPost("/createProject") {
+            val project = call.receive<Project>()
+            projectService.createProject(project.userId, project.projectName)
+            call.respondText("Project created successfully", status = HttpStatusCode.Created)
         }
 
-        get("/") {
-            // Handle listing all projects for a user
+        authGet("/all") {
+            val projects = projectService.getAllProjects()
+            call.respond(projects)
         }
-
-        // Add other project-related routes
     }
 }
+

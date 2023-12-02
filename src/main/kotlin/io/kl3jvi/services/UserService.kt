@@ -2,6 +2,8 @@ package io.kl3jvi.services
 
 import com.mongodb.reactivestreams.client.MongoCollection
 import io.kl3jvi.models.CollectionType
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.reactive.asFlow
 import org.bson.Document
@@ -13,22 +15,23 @@ import org.mindrot.jbcrypt.BCrypt
 class UserService : KoinComponent {
     private val usersCollection: MongoCollection<Document> by inject(named(CollectionType.USER.name))
 
-    fun registerUser(username: String, password: String) {
+    suspend fun registerUser(username: String, password: String) {
         val hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt())
         val user = Document("username", username)
             .append("password", hashedPassword)
             .append("projectIds", mutableListOf<String>())
         usersCollection.insertOne(user)
+            .asFlow()
+            .catch { e -> println("Exception thrown in registerUser: $e") }
+            .collect()
     }
 
     suspend fun loginUser(username: String, password: String): Boolean {
         return usersCollection.find(Document("username", username))
             .asFlow()
             .first { user ->
-                val hashedPassword = user.getString("username")
+                val hashedPassword = user.getString("password")
                 BCrypt.checkpw(password, hashedPassword)
-            }.all {
-                it.key == "username"
-            }
+            } != null
     }
 }
