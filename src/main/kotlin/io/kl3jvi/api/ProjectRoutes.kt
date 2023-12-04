@@ -18,7 +18,7 @@ fun Application.setupProjectRoutes() {
 }
 
 fun Route.projectRoutes(projectService: ProjectService) {
-   route("/api/projects") {
+    route("/api/projects") {
         authPost("/createProject") {
             val project = call.receive<ProjectCreation>()
             val principal = call.principal<JWTPrincipal>()

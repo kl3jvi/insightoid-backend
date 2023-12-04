@@ -23,11 +23,13 @@ class ResponseBuilder {
         authToken: String? = null,
         refreshToken: String? = null,
         expiresAt: Any? = null,
-        data: Any? = null
+        data: Any? = null,
     ) = Response(HttpStatusCode.OK.value, message, authToken, refreshToken, expiresAt, data)
 
-    fun created(message: String, data: Any?) =
-        Response(HttpStatusCode.Created.value, message, data = data)
+    fun created(
+        message: String,
+        data: Any?,
+    ) = Response(HttpStatusCode.Created.value, message, data = data)
 
     fun created(message: String) = Response(HttpStatusCode.Created.value, message)
 
@@ -45,9 +47,16 @@ class ResponseBuilder {
 
     fun notImplemented(message: String) = Response(HttpStatusCode.NotImplemented.value, message)
 
-    fun custom(status: HttpStatusCode, message: String) = Response(status.value, message)
+    fun custom(
+        status: HttpStatusCode,
+        message: String,
+    ) = Response(status.value, message)
 
-    fun custom(status: HttpStatusCode, message: String, data: Any?) = Response(status.value, message, data = data)
+    fun custom(
+        status: HttpStatusCode,
+        message: String,
+        data: Any?,
+    ) = Response(status.value, message, data = data)
 
     fun custom(
         status: HttpStatusCode,
@@ -55,9 +64,8 @@ class ResponseBuilder {
         authToken: String?,
         refreshToken: String?,
         expiresAt: Any?,
-        data: Any?
-    ) =
-        Response(status.value, message, authToken, refreshToken, expiresAt, data)
+        data: Any?,
+    ) = Response(status.value, message, authToken, refreshToken, expiresAt, data)
 }
 
 suspend fun ApplicationCall.respondWith(builder: ResponseBuilder.() -> Response) {

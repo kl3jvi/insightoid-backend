@@ -16,12 +16,18 @@ class CrashDataService : KoinComponent {
     private val projectCollection: MongoCollection<Document> by inject(named(CollectionType.PROJECT.name))
 
     suspend fun addCrashData(crashData: CrashData) {
-        val crashDocument =
-            Document("threadName", crashData.threadName).append("threadId", crashData.threadId)
-                .append("exceptionName", crashData.exceptionName).append("exceptionMessage", crashData.exceptionMessage)
-                .append("stackTrace", crashData.stackTrace)
-        crashesCollection.insertOne(crashDocument).asFlow()
-            .catch { e -> println("Exception thrown in addCrashData: $e") }.collect()
+        val crashDocument = Document("projectId", crashData.projectId)
+            .append("threadName", crashData.threadName)
+            .append("threadId", crashData.threadId)
+            .append("exceptionName", crashData.exceptionName)
+            .append("exceptionMessage", crashData.exceptionMessage)
+            .append("stackTrace", crashData.stackTrace)
+
+        crashesCollection.insertOne(crashDocument)
+            .asFlow()
+            .catch { e ->
+                println("Exception thrown in addCrashData: $e")
+            }.collect()
     }
 
     suspend fun getCrashDataByProjectId(projectId: String): Project {
@@ -39,6 +45,6 @@ class CrashDataService : KoinComponent {
                     stackTrace = it.getString("stackTrace"),
                 )
             }.toList()
-        return Project(projectId, projectName, crashes)
+        return Project(projectName, projectId, crashes)
     }
 }

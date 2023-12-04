@@ -45,10 +45,9 @@ fun Route.userRoutes(
                         "User logged in successfully",
                         authToken = authToken.first,
                         refreshToken = refreshToken.first,
-                        expiresAt = authToken.second
+                        expiresAt = authToken.second,
                     )
                 }
-
             } else {
                 call.respondWith { unauthorized("Invalid username or password") }
             }
@@ -64,10 +63,11 @@ fun Route.userRoutes(
                 val newToken = jwtService.generateToken(user)
                 call.respondWith {
                     ok(
-                        "Access token refreshed successfully", authToken = newToken.first, expiresAt = newToken.second
+                        "Access token refreshed successfully",
+                        authToken = newToken.first,
+                        expiresAt = newToken.second,
                     )
                 }
-
             } else {
                 call.respondWith { unauthorized("Invalid refresh token") }
             }
