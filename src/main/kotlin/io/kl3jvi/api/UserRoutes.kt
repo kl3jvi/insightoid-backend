@@ -9,6 +9,7 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.routing.*
 import org.koin.java.KoinJavaComponent.inject
+import java.util.*
 
 fun Application.setupUserRoutes() {
     val userService: UserService by inject(UserService::class.java)
@@ -25,16 +26,16 @@ fun Route.userRoutes(
     route("/auth") {
         post("/register") {
             val user = call.receive<User>()
-            userService.registerUser(user.username, user.password)
-            val token = jwtService.generateToken(user)
-            call.respondOk("User registered successfully", token = token)
+            userService.registerUser(user)
+            call.respondOk("User registered successfully")
         }
 
         post("/login") {
             val user = call.receive<User>()
-            val isUserValid = userService.loginUser(user.username, user.password)
-            if (isUserValid) {
-                call.respondOk("User logged in successfully", jwtService.generateToken(user))
+            val loggedInUser = userService.loginUser(user.username, user.password)
+            if (loggedInUser) {
+                val token = jwtService.generateToken(user)
+                call.respondOk("User logged in successfully", token = token)
             } else {
                 call.respondUnauthorized("Invalid username or password")
             }

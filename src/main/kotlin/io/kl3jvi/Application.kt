@@ -11,6 +11,7 @@ import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.server.plugins.contentnegotiation.*
+import kotlinx.serialization.json.Json
 import org.koin.core.context.startKoin
 
 fun main() {
@@ -31,6 +32,8 @@ fun Application.module() {
     setupProjectRoutes()
     setupCrashDataRoutes()
     install(ContentNegotiation) {
-        json()
+        json(Json {
+            encodeDefaults = false
+        })
     }
 }

@@ -1,6 +1,5 @@
 package io.kl3jvi
 
-import io.kl3jvi.plugins.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
@@ -12,7 +11,7 @@ class ApplicationTest {
     fun testRoot() =
         testApplication {
             application {
-                configureRouting()
+
             }
             client.get("/").apply {
                 assertEquals(HttpStatusCode.OK, status)

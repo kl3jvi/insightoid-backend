@@ -16,9 +16,10 @@ class CrashDataService : KoinComponent {
     private val projectCollection: MongoCollection<Document> by inject(named(CollectionType.PROJECT.name))
 
     suspend fun addCrashData(crashData: CrashData) {
-        val crashDocument = Document("threadName", crashData.threadName).append("threadId", crashData.threadId)
-            .append("exceptionName", crashData.exceptionName).append("exceptionMessage", crashData.exceptionMessage)
-            .append("stackTrace", crashData.stackTrace)
+        val crashDocument =
+            Document("threadName", crashData.threadName).append("threadId", crashData.threadId)
+                .append("exceptionName", crashData.exceptionName).append("exceptionMessage", crashData.exceptionMessage)
+                .append("stackTrace", crashData.stackTrace)
         crashesCollection.insertOne(crashDocument).asFlow()
             .catch { e -> println("Exception thrown in addCrashData: $e") }.collect()
     }
@@ -27,16 +28,17 @@ class CrashDataService : KoinComponent {
         val projectDocument = projectCollection.find(Document("projectId", projectId)).asFlow().first()
         val projectName = projectDocument.getString("projectName")
 
-        val crashes = crashesCollection.find(Document("projectId", projectId)).asFlow().map {
-            CrashData(
-                projectId = it.getString("projectId"),
-                threadName = it.getString("threadName"),
-                threadId = it.getLong("threadId"),
-                exceptionName = it.getString("exceptionName"),
-                exceptionMessage = it.getString("exceptionMessage"),
-                stackTrace = it.getString("stackTrace")
-            )
-        }.toList()
+        val crashes =
+            crashesCollection.find(Document("projectId", projectId)).asFlow().map {
+                CrashData(
+                    projectId = it.getString("projectId"),
+                    threadName = it.getString("threadName"),
+                    threadId = it.getLong("threadId"),
+                    exceptionName = it.getString("exceptionName"),
+                    exceptionMessage = it.getString("exceptionMessage"),
+                    stackTrace = it.getString("stackTrace"),
+                )
+            }.toList()
         return Project(projectId, projectName, crashes)
     }
 }

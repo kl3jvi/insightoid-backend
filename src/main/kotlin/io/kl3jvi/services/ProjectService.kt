@@ -44,16 +44,14 @@ class ProjectService : KoinComponent {
             .collect()
     }
 
-    suspend fun getAllProjects(): List<ProjectCreation> {
-        return projectsCollection.find()
+    suspend fun getAllProjects(userId: String): List<ProjectCreation> {
+        return projectsCollection.find(Document("userId", userId))
             .asFlow()
-            .onEach { project ->
-                println(project)
-            }
             .catch { e -> println("Exception thrown in getAllProjects: $e") }
             .map { project ->
                 ProjectCreation(
                     projectName = project.getString("projectName"),
+                    projectId = project.getString("projectId"),
                     userId = project.getString("userId"),
                 )
             }.toList()

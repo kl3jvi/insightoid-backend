@@ -3,6 +3,7 @@ package io.kl3jvi.utils
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -10,24 +11,29 @@ data class State(
     val status: Int,
     val message: String,
     val token: String? = null,
+    @Serializable(with = DataSerializer::class)
+    val data: Any? = null,
 )
 
 private suspend fun ApplicationCall.respondStatus(
     status: HttpStatusCode,
     message: String,
     token: String? = null,
-) = respond(State(status.value, message, token))
+    data: Any? = null,
+) = respond(status, State(status.value, message, token, data))
 
 suspend fun ApplicationCall.respondOk(
     message: String,
     token: String? = null,
-) = respondStatus(HttpStatusCode.OK, message, token)
+    data: Any? = null,
+) = respondStatus(HttpStatusCode.OK, message, token, data)
 
-suspend fun ApplicationCall.respondCreated(message: String) = respondStatus(HttpStatusCode.Created, message)
+suspend fun ApplicationCall.respondCreated(message: String, data: Any?) = respondStatus(HttpStatusCode.Created, message)
 
 suspend fun ApplicationCall.respondBadRequest(message: String) = respondStatus(HttpStatusCode.BadRequest, message)
 
-suspend fun ApplicationCall.respondUnauthorized(message: String) = respondStatus(HttpStatusCode.Unauthorized, message)
+suspend fun ApplicationCall.respondUnauthorized(message: String) =
+    respondStatus(HttpStatusCode.Unauthorized, message)
 
 suspend fun ApplicationCall.respondNotFound(message: String) = respondStatus(HttpStatusCode.NotFound, message)
 

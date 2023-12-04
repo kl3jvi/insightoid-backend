@@ -22,5 +22,5 @@ class JWTService(
             .withExpiresAt(expiresAt())
             .sign(algorithm)
 
-    private fun expiresAt() = Date(System.currentTimeMillis() + 3_600_000) // 1 hour
+    private fun expiresAt() = Date(System.currentTimeMillis() + 24 * 3_600_000) // 1 hour
 }
