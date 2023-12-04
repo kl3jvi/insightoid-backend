@@ -25,8 +25,19 @@ fun Route.projectRoutes(projectService: ProjectService) {
             val userId =
                 principal?.payload?.getClaim("id")?.asString()
                     ?: return@authPost call.respondWith { unauthorized("Couldn't create project, check auth token") }
-            projectService.createProject(userId, project.projectName)
-            call.respondWith { created("Project created successfully") }
+            val projectKey = projectService.createProject(userId, project.projectName) {
+                call.respondWith { conflict("Project already exists") }
+                return@createProject
+            }
+            call.respondWith {
+                created(
+                    "Project created successfully", data = ProjectCreation(
+                        projectName = project.projectName,
+                        projectId = projectKey,
+                        userId = null,
+                    )
+                )
+            }
         }
 
         authGet("/all") {

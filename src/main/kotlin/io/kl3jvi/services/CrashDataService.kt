@@ -32,21 +32,23 @@ class CrashDataService : KoinComponent {
     }
 
     suspend fun getCrashDataByProjectId(projectId: String): Project {
-        val projectDocument = projectCollection.find(Document("projectId", projectId)).asFlow().first()
+        val projectDocument = projectCollection.find(Document("projectId", projectId)).asFlow().firstOrNull()
+            ?: return Project(null, null, emptyList())
         val projectName = projectDocument.getString("projectName")
 
         val crashes =
-            crashesCollection.find(Document("projectId", projectId)).asFlow().map {
-                CrashData(
-                    projectId = it.getString("projectId"),
-                    threadName = it.getString("threadName"),
-                    threadId = it.getLong("threadId"),
-                    exceptionName = it.getString("exceptionName"),
-                    exceptionMessage = it.getString("exceptionMessage"),
-                    stackTrace = it.getString("stackTrace"),
+            crashesCollection.find(Document("projectId", projectId)).asFlow()
+                .map {
+                    CrashData(
+                        projectId = it.getString("projectId"),
+                        threadName = it.getString("threadName"),
+                        threadId = it.getLong("threadId"),
+                        exceptionName = it.getString("exceptionName"),
+                        exceptionMessage = it.getString("exceptionMessage"),
+                        stackTrace = it.getString("stackTrace"),
 
-                )
-            }.toList()
+                        )
+                }.toList() ?: emptyList()
         return Project(projectName, projectId, crashes)
     }
 }

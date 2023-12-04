@@ -18,12 +18,25 @@ class ProjectService : KoinComponent {
     suspend fun createProject(
         userId: String,
         projectName: String,
-    ) {
+        projectExistCallback: suspend () -> Unit
+    ): String {
+        val projectExists =
+            projectsCollection.find(Document("projectName", projectName))
+                .asFlow()
+                .firstOrNull()
+                .isNullOrEmpty()
+
+        if (!projectExists) {
+            projectExistCallback()
+            return ""
+        }
+
         val projectKey = UUID.randomUUID().toString()
         val project =
             Document("projectId", projectKey)
                 .append("projectName", projectName)
                 .append("userId", userId)
+
         projectsCollection.insertOne(project)
             .asFlow()
             .onEach { println("Inserted project with key $projectKey") }
@@ -44,6 +57,8 @@ class ProjectService : KoinComponent {
             }
             .catch { e -> println("Exception thrown in createProject: $e") }
             .collect()
+
+        return projectKey
     }
 
     suspend fun getAllProjects(userId: String): List<ProjectCreation> {
