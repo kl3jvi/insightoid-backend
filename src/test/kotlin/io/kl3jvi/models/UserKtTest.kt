@@ -4,7 +4,6 @@ import junit.framework.TestCase.assertEquals
 import kotlin.test.Test
 
 class UserKtTest {
-
     @Test
     fun testGenerateUUIDFromUsername() {
         val result = generateUUIDFromUsername("kl3jvi", "kl3jvi123")

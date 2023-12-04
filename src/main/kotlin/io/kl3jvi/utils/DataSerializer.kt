@@ -12,7 +12,10 @@ import kotlinx.serialization.encoding.Encoder
 object DataSerializer : KSerializer<Any?> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Any", PrimitiveKind.STRING)
 
-    override fun serialize(encoder: Encoder, value: Any?) {
+    override fun serialize(
+        encoder: Encoder,
+        value: Any?,
+    ) {
         when (value) {
             is String -> encoder.encodeString(value)
             is Int -> encoder.encodeInt(value)
@@ -28,7 +31,7 @@ object DataSerializer : KSerializer<Any?> {
                 if (value.isNotEmpty() && value[0] is ProjectCreation) {
                     encoder.encodeSerializableValue(
                         ListSerializer(ProjectCreation.serializer()),
-                        value as List<ProjectCreation>
+                        value as List<ProjectCreation>,
                     )
                 }
             }

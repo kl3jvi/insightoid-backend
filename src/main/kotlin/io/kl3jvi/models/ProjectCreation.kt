@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 data class ProjectCreation(
     val projectName: String,
     val userId: String? = null,
-    val projectId: String? = null
+    val projectId: String? = null,
 )
 
 // json representation of ProjectCreation class

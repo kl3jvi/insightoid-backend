@@ -8,13 +8,17 @@ import java.util.*
 data class User(
     val username: String,
     val password: String,
-    val userId: String = generateUUIDFromUsername(username, password)
+    val userId: String = generateUUIDFromUsername(username, password),
 )
 
-fun generateUUIDFromUsername(username: String, password: String): String {
+fun generateUUIDFromUsername(
+    username: String,
+    password: String,
+): String {
     val toHash = username + password
-    val bytes = MessageDigest
-        .getInstance("SHA-256")
-        .digest(toHash.toByteArray())
+    val bytes =
+        MessageDigest
+            .getInstance("SHA-256")
+            .digest(toHash.toByteArray())
     return UUID.nameUUIDFromBytes(bytes).toString()
 }

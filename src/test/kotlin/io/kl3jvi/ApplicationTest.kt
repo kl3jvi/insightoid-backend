@@ -11,7 +11,6 @@ class ApplicationTest {
     fun testRoot() =
         testApplication {
             application {
-
             }
             client.get("/").apply {
                 assertEquals(HttpStatusCode.OK, status)

@@ -22,8 +22,9 @@ fun Route.projectRoutes(projectService: ProjectService) {
         authPost("/createProject") {
             val project = call.receive<ProjectCreation>()
             val principal = call.principal<JWTPrincipal>()
-            val userId = principal?.payload?.getClaim("id")?.asString()
-                ?: return@authPost call.respondUnauthorized("Couldn't create project, check auth token")
+            val userId =
+                principal?.payload?.getClaim("id")?.asString()
+                    ?: return@authPost call.respondUnauthorized("Couldn't create project, check auth token")
             projectService.createProject(userId, project.projectName)
             call.respondCreated("Project created successfully", data = project)
         }

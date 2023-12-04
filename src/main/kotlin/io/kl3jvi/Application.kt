@@ -32,8 +32,10 @@ fun Application.module() {
     setupProjectRoutes()
     setupCrashDataRoutes()
     install(ContentNegotiation) {
-        json(Json {
-            encodeDefaults = false
-        })
+        json(
+            Json {
+                encodeDefaults = false
+            },
+        )
     }
 }
