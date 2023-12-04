@@ -22,6 +22,7 @@ class CrashDataService : KoinComponent {
             .append("exceptionName", crashData.exceptionName)
             .append("exceptionMessage", crashData.exceptionMessage)
             .append("stackTrace", crashData.stackTrace)
+            .append("timeStamp", crashData.timeStamp)
 
         crashesCollection.insertOne(crashDocument)
             .asFlow()
@@ -43,6 +44,7 @@ class CrashDataService : KoinComponent {
                     exceptionName = it.getString("exceptionName"),
                     exceptionMessage = it.getString("exceptionMessage"),
                     stackTrace = it.getString("stackTrace"),
+
                 )
             }.toList()
         return Project(projectName, projectId, crashes)

@@ -1,6 +1,7 @@
 package io.kl3jvi.models
 
 import kotlinx.serialization.Serializable
+import java.util.*
 
 @Serializable
 data class CrashData(
@@ -10,4 +11,5 @@ data class CrashData(
     val exceptionName: String,
     val exceptionMessage: String,
     val stackTrace: String,
+    val timeStamp: Long = Date().time,
 )

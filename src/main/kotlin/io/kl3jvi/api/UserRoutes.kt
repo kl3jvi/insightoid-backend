@@ -14,9 +14,7 @@ import org.koin.java.KoinJavaComponent.inject
 fun Application.setupUserRoutes() {
     val userService: UserService by inject(UserService::class.java)
     val jwtService: JWTService by inject(JWTService::class.java)
-    routing {
-        userRoutes(userService, jwtService)
-    }
+    routing { userRoutes(userService, jwtService) }
 }
 
 fun Route.userRoutes(
@@ -62,11 +60,7 @@ fun Route.userRoutes(
                     userService.getUserById(userId) ?: return@post call.respondWith { unauthorized("Invalid User") }
                 val newToken = jwtService.generateToken(user)
                 call.respondWith {
-                    ok(
-                        "Access token refreshed successfully",
-                        authToken = newToken.first,
-                        expiresAt = newToken.second,
-                    )
+                    ok("Access token refreshed successfully", authToken = newToken.first, expiresAt = newToken.second)
                 }
             } else {
                 call.respondWith { unauthorized("Invalid refresh token") }
