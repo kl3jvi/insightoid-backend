@@ -38,7 +38,9 @@ class ProjectService : KoinComponent {
                 usersCollection.updateOne(
                     Document("userId", userId),
                     Document("\$set", Document("projectIds", projectIds)),
-                )
+                ).asFlow()
+                    .catch { e -> println("Exception thrown in createProject: $e") }
+                    .collect()
             }
             .catch { e -> println("Exception thrown in createProject: $e") }
             .collect()

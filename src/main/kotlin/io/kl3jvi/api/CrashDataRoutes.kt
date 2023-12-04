@@ -17,7 +17,7 @@ fun Application.setupCrashDataRoutes() {
 }
 
 fun Route.crashDataRoutes(crashDataService: CrashDataService) {
-    route("/crash-reports") {
+   route("/api/crash-reports") {
         post("/report") {
             // get project id from header, if null return 400
             val projectId: String =

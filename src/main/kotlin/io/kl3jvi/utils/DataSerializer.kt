@@ -8,6 +8,7 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import java.util.*
 
 object DataSerializer : KSerializer<Any?> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Any", PrimitiveKind.STRING)
@@ -26,6 +27,7 @@ object DataSerializer : KSerializer<Any?> {
             is Short -> encoder.encodeShort(value)
             is Byte -> encoder.encodeByte(value)
             is Char -> encoder.encodeChar(value)
+            is Date -> encoder.encodeString(value.time.toString())
             is ProjectCreation -> encoder.encodeString(value.toString())
             is List<*> -> {
                 if (value.isNotEmpty() && value[0] is ProjectCreation) {

@@ -14,13 +14,21 @@ class JWTService(
 
     val verifier: JWTVerifier = JWT.require(algorithm).withIssuer(issuer).build()
 
-    fun generateToken(user: User): String =
+    fun generateToken(user: User): Pair<String, Date> =
         JWT.create()
             .withSubject("Authentication")
             .withIssuer(issuer)
             .withClaim("id", user.userId)
-            .withExpiresAt(expiresAt())
-            .sign(algorithm)
+            .withExpiresAt(expiresAt(24 * 3_600_000))
+            .sign(algorithm) to expiresAt(24 * 3_600_000)
 
-    private fun expiresAt() = Date(System.currentTimeMillis() + 24 * 3_600_000) // 1 hour
+    fun generateRefreshToken(user: User): Pair<String, Date> =
+        JWT.create()
+            .withSubject("Authentication")
+            .withIssuer(issuer)
+            .withClaim("id", user.userId)
+            .withExpiresAt(expiresAt(7 * 24 * 60 * 60)) // 7 days
+            .sign(algorithm) to expiresAt(7 * 24 * 60 * 60)
+
+    private fun expiresAt(time: Long) = Date(System.currentTimeMillis() + time) // 1 hour
 }
