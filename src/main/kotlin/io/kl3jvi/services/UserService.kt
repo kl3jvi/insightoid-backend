@@ -12,17 +12,24 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.koin.core.qualifier.named
 import org.mindrot.jbcrypt.BCrypt
+import java.util.*
 
 class UserService : KoinComponent {
     private val usersCollection: MongoCollection<Document> by inject(named(CollectionType.USER.name))
-
     suspend fun registerUser(
         user: User,
         userExist: suspend () -> Unit,
     ) {
-        // check if there is already a user with the same username
+        // check if there is already a user with the same username or email
         val existingUser =
-            usersCollection.find(Document("username", user.username))
+            usersCollection.find(
+                Document(
+                    "\$or", listOf(
+                        Document("username", user.username),
+                        Document("email", user.email)
+                    )
+                )
+            )
                 .asFlow()
                 .firstOrNull()
                 .isNullOrEmpty()
@@ -34,8 +41,9 @@ class UserService : KoinComponent {
 
         val hashedPassword = BCrypt.hashpw(user.password, BCrypt.gensalt())
         val generatedUserDocument =
-            Document("username", user.username)
-                .append("userId", user.userId)
+            Document("userId", user.userId)
+                .append("username", user.username)
+                .append("email", user.email)
                 .append("password", hashedPassword)
                 .append("projectIds", mutableListOf<String>())
         usersCollection.insertOne(generatedUserDocument)
@@ -44,15 +52,15 @@ class UserService : KoinComponent {
             .collect()
     }
 
-    suspend fun loginUser(
-        username: String,
-        password: String,
-    ): Boolean {
-        return usersCollection.find(Document("username", username))
+    suspend fun loginUser(user: User): Boolean {
+        // Create a filter to find a user with the given username or email
+        val filter = Document("\$or", listOf(Document("username", user.username), Document("email", user.username)))
+
+        return usersCollection.find(filter)
             .asFlow()
-            .firstOrNull { user ->
-                val hashedPassword = user.getString("password")
-                BCrypt.checkpw(password, hashedPassword)
+            .firstOrNull { foundUser ->
+                val hashedPassword = foundUser.getString("password")
+                BCrypt.checkpw(user.password, hashedPassword)
             } != null
     }
 
@@ -83,7 +91,18 @@ class UserService : KoinComponent {
                 userId = it.getString("userId"),
                 username = it.getString("username"),
                 password = it.getString("password"),
+                email = it.getString("email"),
             )
         }
     }
+
+    suspend fun updateLastSeen(userId: String) {
+        val update = Document("\$set", Document("lastSeen", Date()))
+        usersCollection.updateOne(Document("userId", userId), update)
+            .asFlow()
+            .catch { e -> println("Exception thrown in updateLastSeen: $e") }
+            .collect()
+    }
+
+
 }

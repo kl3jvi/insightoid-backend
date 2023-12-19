@@ -18,11 +18,12 @@ fun Route.crashDataRoutes(crashDataService: CrashDataService) {
         post("/report") {
             val projectId: String = call.request.headers["projectId"]
                 ?: return@post call.respondWith { badRequest("Missing project id") }
-
             val crashData = call.receive<CrashData>()
             val changedCrashData = crashData.copy(projectId = projectId)
             crashDataService.addCrashData(changedCrashData)
-            call.respondWith { created("Crash data added successfully", data = changedCrashData) }
+            call.respondWith {
+                created("Crash data added successfully", data = changedCrashData)
+            }
         }
 
         get("/project/{projectId}") {

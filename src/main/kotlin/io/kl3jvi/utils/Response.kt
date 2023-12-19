@@ -32,6 +32,12 @@ class ResponseBuilder {
     ) = Response(HttpStatusCode.Created.value, message, data = data)
 
     fun created(message: String) = Response(HttpStatusCode.Created.value, message)
+    fun created(
+        message: String,
+        authToken: String,
+        refreshToken: String,
+        expiresAt: Any
+    ) = Response(HttpStatusCode.Created.value, message, authToken, refreshToken, expiresAt)
 
     fun badRequest(message: String) = Response(HttpStatusCode.BadRequest.value, message)
 

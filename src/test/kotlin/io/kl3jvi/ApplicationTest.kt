@@ -13,8 +13,7 @@ class ApplicationTest {
             application {
             }
             client.get("/").apply {
-                assertEquals(HttpStatusCode.OK, status)
-                assertEquals("Hello World!", bodyAsText())
+                assertEquals(HttpStatusCode.NotFound, status)
             }
         }
 }

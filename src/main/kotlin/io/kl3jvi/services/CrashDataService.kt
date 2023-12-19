@@ -22,6 +22,7 @@ class CrashDataService : KoinComponent {
             .append("exceptionName", crashData.exceptionName)
             .append("exceptionMessage", crashData.exceptionMessage)
             .append("stackTrace", crashData.stackTrace)
+            .append("uniqueIdentifier", crashData.uniqueIdentifier)
             .append("timeStamp", crashData.timeStamp)
 
         crashesCollection.insertOne(crashDocument)
@@ -32,7 +33,9 @@ class CrashDataService : KoinComponent {
     }
 
     suspend fun getCrashDataByProjectId(projectId: String): Project {
-        val projectDocument = projectCollection.find(Document("projectId", projectId)).asFlow().firstOrNull()
+        val projectDocument = projectCollection.find(Document("projectId", projectId))
+            .asFlow()
+            .firstOrNull()
             ?: return Project(null, null, emptyList())
         val projectName = projectDocument.getString("projectName")
 
@@ -46,9 +49,9 @@ class CrashDataService : KoinComponent {
                         exceptionName = it.getString("exceptionName"),
                         exceptionMessage = it.getString("exceptionMessage"),
                         stackTrace = it.getString("stackTrace"),
-
-                        )
-                }.toList() ?: emptyList()
+                        uniqueIdentifier = "",
+                    )
+                }.toList()
         return Project(projectName, projectId, crashes)
     }
 }

@@ -12,4 +12,5 @@ data class CrashData(
     val exceptionMessage: String,
     val stackTrace: String,
     val timeStamp: Long = Date().time,
+    val uniqueIdentifier: String,
 )

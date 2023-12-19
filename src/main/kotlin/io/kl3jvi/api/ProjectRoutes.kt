@@ -42,12 +42,37 @@ fun Route.projectRoutes(projectService: ProjectService) {
 
         authGet("/all") {
             val principal = call.principal<JWTPrincipal>()
-            val userId = principal?.payload?.getClaim("id")?.asString()
+            val userId = principal?.payload
+                ?.getClaim("id")
+                ?.asString()
             if (userId != null) {
                 val projects = projectService.getAllProjects(userId)
                 call.respondWith { ok("All projects fetched successfully", data = projects) }
             } else {
                 call.respondWith { unauthorized("Couldn't fetch projects, check auth token") }
+            }
+        }
+
+        authGet("/{projectId}/dashboardInfo") {
+            val projectId = call.parameters["projectId"]
+            if (projectId != null) {
+                val totalCrashes = projectService.getTotalCrashes(projectId)
+                val totalUsers = projectService.getTotalUsers(projectId)
+                val usersOnline = projectService.getUsersOnlinePast30Minutes(projectId)
+                call.respondWith {
+                    ok(
+                        message = "Dashboard info fetched successfully",
+                        data = mapOf(
+                            "totalCrashes" to totalCrashes,
+                            "totalUsers" to totalUsers,
+                            "usersOnlinePast30Minutes" to usersOnline
+                        )
+                    )
+                }
+            } else {
+                call.respondWith {
+                    badRequest("Project ID is required")
+                }
             }
         }
     }

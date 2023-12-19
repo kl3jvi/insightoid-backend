@@ -5,24 +5,32 @@ val logback_version: String by project
 val exposed_version: String by project
 val h2_version: String by project
 
+application {
+    mainClass.set("io.kl3jvi.ApplicationKt")
+}
+
 plugins {
     kotlin("jvm") version "1.9.21"
     id("io.ktor.plugin") version "2.3.6"
     id("org.jetbrains.kotlin.plugin.serialization") version "1.9.21"
+    id("com.github.johnrengelman.shadow") version "7.1.0"
 }
+
+
 
 group = "io.kl3jvi"
 version = "0.0.1"
 
 application {
-    mainClass.set("io.kl3jvi.ApplicationKt")
-
-    val isDevelopment: Boolean = project.ext.has("development")
-    applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
+    mainClass = "io.kl3jvi.ApplicationKt"
 }
 
 repositories {
     mavenCentral()
+}
+
+tasks.register("stage") {
+    dependsOn("build", "clean")
 }
 
 dependencies {
@@ -47,12 +55,27 @@ dependencies {
     implementation("io.insert-koin:koin-core:3.1.2")
     implementation("io.insert-koin:koin-ktor:3.1.2")
     implementation("io.ktor:ktor-auth-jwt:1.6.7")
+    implementation("io.ktor:ktor-server-cors:$ktor_version")
     // bcrypt
     implementation("org.mindrot:jbcrypt:0.4")
     implementation("com.h2database:h2:$h2_version")
-    implementation("io.ktor:ktor-server-netty-jvm")
+//    netty
+    implementation("io.ktor:ktor-server-netty:$ktor_version")
     implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("io.ktor:ktor-server-auth-jwt-jvm:2.3.6")
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+}
+
+tasks {
+    shadowJar {
+        archiveBaseName.set("backend")
+        archiveClassifier.set("")
+        archiveVersion.set("")
+        isZip64 = true
+        manifest {
+            attributes(Pair("Main-Class", "io.kl3jvi.ApplicationKt"))
+        }
+        configurations = listOf(project.configurations.runtimeClasspath.get())
+    }
 }
